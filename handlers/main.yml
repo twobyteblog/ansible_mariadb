@@ -1,0 +1,11 @@
+---
+# handlers file for ansible_mariadb
+
+- name: reload ufw
+  community.general.ufw:
+    state: reloaded
+
+- name: restart mariadb
+  service:
+    name: mariadb
+    state: restarted

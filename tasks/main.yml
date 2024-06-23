@@ -1,0 +1,79 @@
+---
+
+# Install MariaDB and its dependencies.
+
+- name: Install MariaDB package.
+  ansible.builtin.apt: 
+    name: "{{ mariadb_packages }}"
+    state: latest
+    update_cache: yes
+
+- name: Configure MySQL to listen for remote connections.
+  lineinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^bind-address(.*)'
+    line: 'bind-address = 0.0.0.0'
+  notify: restart mariadb
+  when: mysql_external_access is defined
+  tags: external
+
+# Ensure MariaDB is secure. Equivalent to running `mysql_secure_installation`.
+
+- name: Set MySQL root credentials.
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    check_implicit_admin: true
+
+- name: Create .my.cnf
+  ansible.builtin.template:
+   src: "my.cnf.j2"
+   dest: "/root/.my.cnf"
+   owner: root
+   group: root
+   mode: 0600
+
+- name: Delete anonymous MySQL user.
+  mysql_user: name="" host={{ item }} state=absent
+  with_items:
+    - localhost
+    - "{{ ansible_nodename }}"
+  
+- name: Delete hostname-based MySQL user.
+  mysql_user: name=root host="{{ ansible_nodename }}" state=absent
+
+- name: Remove MySQL test database.
+  mysql_db: name=test state=absent
+
+# Configure nightly MariaDB backups.
+
+- name: Create /opt/mysql-backup/.
+  ansible.builtin.file:
+    path: /opt/mysql-backup
+    state: directory
+    mode: '0755'
+
+- name: Install mysql-backup script.
+  ansible.builtin.copy:
+    src: mysql-backup.sh
+    dest: /opt/mysql-backup
+    backup: true
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: Add cronjob entry for mysql-backup script.
+  ansible.builtin.cron:
+    name: "Nightly Database Backups"
+    minute: "0"
+    hour: "20"
+    job: "mk-job mysql-backup /opt/mysql-backup/mysql-backup.sh"
+
+- name: Install logrotate entry for mysql-backup.sh logs.
+  ansible.builtin.template:
+   src: "mysql-backup.logrotate.j2"
+   dest: "/etc/logrotate.d/mysql-backup"
+   owner: root
+   group: root
+
