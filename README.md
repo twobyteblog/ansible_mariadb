@@ -1,5 +1,7 @@
 # Ansible Role: MariaDB
 
+This is a minimal role which installs and secures MariaDB. Additionally as part of this role, a backup script and associated crontab is created to ensure daily local backups of all databases. These backups can than be pulled off using your preferred backup solution. By default, backups will be kept for 14 days before being removed.
+
 Installs and configures MariaDB on a Debian 10+ server.
 
 # Requirements
@@ -30,4 +32,12 @@ To install this role, run:
 ```
 git clone https://github.com/inundationca/ansible_mariadb.git
 ```
+
+Within your host or group vars, specify root credential used to secure the installation.
+
+```
+mysql_root_password: mypassword
+```
+
+By default the backup script will retain 14 days worth of backups. To change this, you can modify the script stored in files/mysql_backup.sh.
 

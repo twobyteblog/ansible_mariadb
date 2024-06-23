@@ -2,7 +2,7 @@
 # vars file for ansible_mariadb
 
 # Required packages.
-mariadb_packages: [ mariadb-server, mariadb-client, mariadb-common, python3-pymysql ]
+mariadb_packages: [ mariadb-server, mariadb-client, mariadb-common, python3-pymysql, bzip2 ]
 
 # MySQL root password.
 mysql_root_password:
