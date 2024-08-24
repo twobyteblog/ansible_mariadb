@@ -1,10 +1,10 @@
 # Ansible Role: MariaDB
 
-Ansible role which installs MariaDB on a Debian 10+ and configures nightly SQL backups of all databases (excluding default databases).
+Ansible role which installs MariaDB on Debian 10+ and configures nightly SQL backups of all databases (excluding default databases).
 
 - The installation is secured equivilent to running ```secure_mysql_installation```. 
 - Backups are stored locally under ```/opt/mysql-backup/``` and retained/rotated for 14 days by default.
-- It's recommended backup files are periodically pulled off-site as part of your disaster recovery (DR) plan.
+- It's recommended backup files are periodically pulled off-host as part of your disaster recovery (DR) plan.
 
 The following packages will be installed when this role executes:
 
@@ -41,7 +41,7 @@ To use this role, clone it into the directory containing your other Ansible role
 git clone https://github.com/inundationca/ansible_mariadb.git
 ```
 
-Next, add it to an new or existing playbook.
+Next, add it to a new or existing playbook.
 
 ```
 - hosts: mariadb
