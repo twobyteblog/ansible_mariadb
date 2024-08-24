@@ -53,5 +53,6 @@ Next, add it to an new or existing playbook.
 By default 14 days worth of backups will be retained. This can be modified by overwriting the role's default variables within your group/hosts variables.
 
 ```
+mysql_days_to_keep: 14
 ```
 
