@@ -1,2 +1,11 @@
 ---
 # defaults file for ansible_mariadb
+
+# MySQL root password.
+mysql_root_password: changeme
+
+# Default settings for backing up SQL database.
+
+mysql_days_to_keep: 14
+mysql_backup_directory: '$SCRIPTDIR/backups' # Within a folder called 'backups' where the script is located.
+mysql_logging_location: '/var/log/mysql-backup.log'

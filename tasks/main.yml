@@ -28,11 +28,12 @@
 
 - name: Create .my.cnf
   ansible.builtin.template:
-   src: "my.cnf.j2"
-   dest: "/root/.my.cnf"
-   owner: root
-   group: root
-   mode: 0600
+    src: "my.cnf.j2"
+    dest: "/root/.my.cnf"
+    owner: root
+    group: root
+    mode: 0600
+    backup: true
 
 - name: Delete anonymous MySQL user.
   mysql_user: name="" host={{ item }} state=absent
@@ -55,13 +56,13 @@
     mode: '0755'
 
 - name: Install mysql-backup script.
-  ansible.builtin.copy:
-    src: mysql-backup.sh
-    dest: /opt/mysql-backup
-    backup: true
+  ansible.builtin.template:
+    src: mysql-backup.j2
+    dest: /opt/mysql-backup/mysql-backup.sh
     owner: root
     group: root
     mode: '0700'
+    backup: true
 
 - name: Add cronjob entry for mysql-backup script.
   ansible.builtin.cron:
@@ -72,8 +73,8 @@
 
 - name: Install logrotate entry for mysql-backup.sh logs.
   ansible.builtin.template:
-   src: "mysql-backup.logrotate.j2"
-   dest: "/etc/logrotate.d/mysql-backup"
-   owner: root
-   group: root
+    src: "mysql-backup.logrotate.j2"
+    dest: "/etc/logrotate.d/mysql-backup"
+    owner: root
+    group: root
 

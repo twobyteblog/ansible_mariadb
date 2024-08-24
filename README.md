@@ -1,12 +1,22 @@
 # Ansible Role: MariaDB
 
-This is a minimal role which installs and secures MariaDB. Additionally as part of this role, a backup script and associated crontab is created to ensure daily local backups of all databases. These backups can than be pulled off using your preferred backup solution. By default, backups will be kept for 14 days before being removed.
+Ansible role which installs MariaDB on a Debian 10+ and configures nightly SQL backups of all databases (excluding default databases).
 
-Installs and configures MariaDB on a Debian 10+ server.
+- The installation is secured equivilent to running ```secure_mysql_installation```. 
+- Backups are stored locally under ```/opt/mysql-backup/``` and retained/rotated for 14 days by default.
+- It's recommended backup files are periodically pulled off-site as part of your disaster recovery (DR) plan.
+
+The following packages will be installed when this role executes:
+
+- mariadb-server
+- mariadb-client
+- mariadb-common
+- python3-pymysql
+- bzip2
 
 # Requirements
 
-This role requires root access. Either specify it globally, or add it to your playbook as follows:
+This role requires root access to the host system. Specify it globally, or add it to your playbook (example below).
 
 ```
 - hosts: mariadb
@@ -17,27 +27,31 @@ This role requires root access. Either specify it globally, or add it to your pl
 
 # Role Variables
 
-This role only requires one variable.
-
-```
-mysql_root_password:
-```
-
-This variable can be specified under ```vars/main.yml``` or within host/group vars.
-
-# Installation
-
-To install this role, run:
-
-```
-git clone https://github.com/inundationca/ansible_mariadb.git
-```
-
-Within your host or group vars, specify root credential used to secure the installation.
+To use this role, specify a mysql root password within your host variables.
 
 ```
 mysql_root_password: mypassword
 ```
 
-By default the backup script will retain 14 days worth of backups. To change this, you can modify the script stored in files/mysql_backup.sh.
+# Installation
+
+To use this role, clone it into the directory containing your other Ansible roles.
+
+```
+git clone https://github.com/inundationca/ansible_mariadb.git
+```
+
+Next, add it to an new or existing playbook.
+
+```
+- hosts: mariadb
+  roles:
+    - role: ansible_mariadb
+      become: yes
+```
+
+By default 14 days worth of backups will be retained. This can be modified by overwriting the role's default variables within your group/hosts variables.
+
+```
+```
 

@@ -46,10 +46,10 @@ function log {
 
 # -- Variables --
 
-DAYSTOKEEP=14                            # Number of days to retain database backups.
-TIMESTAMP=$(date +"%F")                 # Timestamp used when generating backup filename.
-BACKUPDIR=$SCRIPTDIR/backups            # Location where backups are written too.
-LOGFILE=/var/log/mysql-backup.log       # Location where log files will be written too.
+DAYSTOKEEP={{ mysql_days_to_keep }}         # Number of days to retain database backups.
+TIMESTAMP=$(date +"%F")                     # Timestamp used when generating backup filename.
+BACKUPDIR={{ mysql_backup_directory }}      # Location where backups are written too.
+LOGFILE={{ mysql_logging_location }}        # Location where log files will be written too.
 
 # -- Dependences --
 
