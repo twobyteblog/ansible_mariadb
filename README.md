@@ -33,7 +33,7 @@ The following packages will be installed when this role executes:
 Clone the project into the roles directory of your Ansible Controller.
 
 ```bash
-git clone https://github.com/twobyteblog/lets_linux.git
+git clone https://github.com/twobyteblog/ansible_mariadb.git
 ```
 
 ### Variables
