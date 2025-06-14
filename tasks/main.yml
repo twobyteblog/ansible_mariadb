@@ -8,23 +8,7 @@
     state: latest
     update_cache: yes
 
-- name: Configure MySQL to listen for remote connections.
-  lineinfile:
-    path: /etc/mysql/mariadb.conf.d/50-server.cnf
-    regexp: '^bind-address(.*)'
-    line: 'bind-address = 0.0.0.0'
-  notify: restart mariadb
-  when: mysql_external_access is defined
-  tags: external
-
-# Ensure MariaDB is secure. Equivalent to running `mysql_secure_installation`.
-
-- name: Set MySQL root credentials.
-  mysql_user:
-    name: root
-    password: "{{ mysql_root_password }}"
-    login_unix_socket: /var/run/mysqld/mysqld.sock
-    check_implicit_admin: true
+# Ensure MariaDB is secure. Equivalent to running mysql_secure_installation.
 
 - name: Create .my.cnf
   ansible.builtin.template:
@@ -34,6 +18,13 @@
     group: root
     mode: 0600
     backup: true
+
+- name: Set MySQL root credentials.
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    check_implicit_admin: true
 
 - name: Delete anonymous MySQL user.
   mysql_user: name="" host={{ item }} state=absent
@@ -46,6 +37,16 @@
 
 - name: Remove MySQL test database.
   mysql_db: name=test state=absent
+
+# Configure external access (if required).
+
+- name: Configure MySQL to listen for remote connections.
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^bind-address(.*)'
+    line: 'bind-address = 0.0.0.0'
+  notify: restart mariadb
+  when: mysql_external_access is defined
 
 # Configure nightly MariaDB backups.
 
